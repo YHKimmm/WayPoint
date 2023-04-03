@@ -1,0 +1,65 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+@media screen and (max-width: 460px) {
+  .gm-style-mtc button {
+    font-size: 13px !important;
+  }
+  li[role="menuitemcheckbox"] {
+    font-size: 13px !important;
+  }
+}
+
+li[role="menuitemcheckbox"],
+li[role="menuitemcheckbox"]:hover,
+li[role="menuitemcheckbox"]:focus {
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+label[style="cursor: inherit;"] {
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+@layer base {
+  #__next {
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+header {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+
+  width: 100%;
+  height: 48px;
+  padding: 0 8px 0 12px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  z-index: 99;
+}

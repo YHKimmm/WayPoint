@@ -1,6 +1,10 @@
 import React from "react";
 
-const PlaceDetail = () => {
+interface PlaceDetailProps {
+  place: any;
+}
+
+const PlaceDetail = ({ place }: PlaceDetailProps) => {
   return <div>PlaceDetail</div>;
 };
 
