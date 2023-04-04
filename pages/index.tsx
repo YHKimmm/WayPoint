@@ -6,33 +6,48 @@ import Map from "@/components/Map";
 import PlaceDetail from "@/components/PlaceDetail";
 import { Flex } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { Coordinates, CurrentLocation } from "@/types/store";
-
-const places = [
-  { name: "Best Place" },
-  { name: "Second Best Place" },
-  { name: "Third Best Place" },
-  { name: "Fourth Best Place" },
-  { name: "Fifth Best Place" },
-  { name: "Sixth Best Place" },
-];
+import { Coordinates, Bounds } from "@/types/store";
+import { getPlacesData } from "./api";
+import { Rating } from "@/types/rating";
 
 export default function Home() {
-  const [currentLocation, setCurrentLocation] = useState({});
+  const [places, setPlaces] = useState<Rating[]>([]);
+  const [filteredPlaces, setFilteredPlaces] = useState<Rating[]>([]);
+  const [coordinates, setCoordinates] = useState({} as Coordinates);
+  const [bounds, setBounds] = useState({} as Bounds);
   const [type, setType] = useState("restaurants");
-  const [ratings, setRatings] = useState(0);
+  const [ratings, setRatings] = useState("0");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // get the user's current location on initial login
     navigator.geolocation.getCurrentPosition(
       ({ coords: { latitude, longitude } }) => {
-        console.log(latitude, longitude);
-        setCurrentLocation({ lat: latitude, lng: longitude });
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+          setCoordinates({ lat: latitude, lng: longitude });
+        }
       }
     );
   }, []);
-  console.log("currentLocation", currentLocation);
+  console.log("coordinates", coordinates);
+
+  useEffect(() => {
+    const filteredPlaces = places.filter(
+      (place) => place.rating !== undefined && place.rating > ratings
+    );
+    setFilteredPlaces(filteredPlaces);
+    console.log("filteredPlaces", filteredPlaces);
+    console.log("ratings", ratings);
+  }, [ratings]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    getPlacesData(type, bounds?.sw, bounds?.ne).then((data) => {
+      console.log("data", data);
+      setPlaces(data);
+      setIsLoading(false);
+    });
+  }, [type, coordinates, bounds]);
 
   return (
     <Flex
@@ -46,7 +61,11 @@ export default function Home() {
 
       <List places={places} isLoading={isLoading} />
 
-      <Map currentLocation={currentLocation} />
+      <Map
+        coordinates={coordinates}
+        setCoordinates={setCoordinates}
+        setBounds={setBounds}
+      />
     </Flex>
   );
 }

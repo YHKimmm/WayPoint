@@ -1,1 +1,1 @@
-export type GoolgeMap = google.maps.Map;
+export type GoogleMapType = google.maps.Map;

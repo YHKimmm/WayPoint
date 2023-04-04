@@ -1,82 +1,39 @@
-import React, { useEffect, useRef } from "react";
-import Script from "next/script";
-import { GoolgeMap } from "@/types/map";
-import { INITIAL_CENTER, INITIAL_ZOOM } from "@/hooks/useMap";
-import { Coordinates, CurrentLocation } from "@/types/store";
+import { Coordinates, Bounds } from "@/types/store";
+import { useEffect, useRef } from "react";
+import GoogleMapReact from "google-map-react";
+import { GoogleMapType } from "@/types/map";
 
-declare global {
-  interface Window {
-    initializeMap: () => void;
-  }
+interface MapProps {
+  coordinates: Coordinates;
+  setCoordinates: (coordinates: Coordinates) => void;
+  setBounds: (bounds: Bounds) => void;
 }
 
-type Props = {
-  mapId?: string;
-  initialCenter?: Coordinates;
-  initialZoom?: number;
-  onLoaded?: (map: GoolgeMap) => void;
-  currentLocation?: { lat: number; lng: number };
-};
+export default function Map({
+  coordinates,
+  setCoordinates,
+  setBounds,
+}: MapProps) {
+  const mapRef = useRef(null);
 
-const Map = ({
-  mapId = "map",
-  initialCenter = INITIAL_CENTER,
-  initialZoom = INITIAL_ZOOM,
-  onLoaded,
-  currentLocation,
-}: Props) => {
-  const mapRef = useRef<GoolgeMap | null>(null);
-
-  const initializeMap = () => {
-    const mapOptions = {
-      center: new window.google.maps.LatLng(
-        currentLocation.lat,
-        currentLocation.lng
-      ),
-      default: new window.google.maps.LatLng(...initialCenter),
-      zoom: initialZoom,
-      minZoom: 9,
-      scaleControl: false,
-      mapDataControl: false,
-      logoControlOptions: {
-        position: google.maps.ControlPosition.LEFT_BOTTOM,
-      },
-    };
-
-    let map: google.maps.Map;
-
-    map = new window.google.maps.Map(
-      document.getElementById(mapId) as HTMLElement,
-      mapOptions
-    );
-    mapRef.current = map;
-
-    window.initializeMap = initializeMap;
-
-    if (onLoaded) {
-      onLoaded(map);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (mapRef.current) {
-        mapRef.current = null;
-      }
-    };
-  }, []);
+  const center = { lat: coordinates.lat, lng: coordinates.lng };
 
   return (
-    <>
-      <Script
-        strategy="afterInteractive"
-        type="text/javascript"
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        onReady={initializeMap}
-      />
-      <div id={mapId} style={{ width: "100%", height: "100%" }} />
-    </>
+    <GoogleMapReact
+      bootstrapURLKeys={{
+        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+      }}
+      defaultZoom={10}
+      zoom={10}
+      center={center}
+      options={{ disableDefaultUI: true, zoomControl: true }}
+      ref={mapRef}
+      margin={[50, 50, 50, 50]}
+      onChange={(e) => {
+        console.log("e", e);
+        setCoordinates({ lat: e.center.lat, lng: e.center.lng });
+        setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw });
+      }}
+    ></GoogleMapReact>
   );
-};
-
-export default Map;
+}

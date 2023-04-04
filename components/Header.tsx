@@ -27,7 +27,7 @@ const theme = createTheme();
 
 interface HeaderProps {
   setType: (type: string) => void;
-  setRatings: (ratings: number) => void;
+  setRatings: (ratings: string) => void;
 }
 const Header = ({ setType, setRatings }: HeaderProps) => {
   return (
@@ -83,7 +83,7 @@ const Header = ({ setType, setRatings }: HeaderProps) => {
                     display={"flex"}
                     alignItems={"center"}
                     justifyContent="space-around"
-                    onClick={() => setRatings(0)}
+                    onClick={() => setRatings("")}
                   >
                     <Text
                       fontSize={{ base: "small", md: "large" }}
@@ -98,7 +98,7 @@ const Header = ({ setType, setRatings }: HeaderProps) => {
                       display={"flex"}
                       alignItems={"center"}
                       justifyContent="space-around"
-                      onClick={() => setRatings(2)}
+                      onClick={() => setRatings("2")}
                     >
                       <Text
                         fontSize={{ base: "small", md: "large" }}
@@ -115,7 +115,7 @@ const Header = ({ setType, setRatings }: HeaderProps) => {
                       display={"flex"}
                       alignItems={"center"}
                       justifyContent="space-around"
-                      onClick={() => setRatings(3)}
+                      onClick={() => setRatings("3")}
                     >
                       <Text
                         fontSize={{ base: "small", md: "large" }}
@@ -132,7 +132,7 @@ const Header = ({ setType, setRatings }: HeaderProps) => {
                       display={"flex"}
                       alignItems={"center"}
                       justifyContent="space-around"
-                      onClick={() => setRatings(4)}
+                      onClick={() => setRatings("4")}
                     >
                       <Text
                         fontSize={{ base: "small", md: "large" }}
@@ -149,7 +149,7 @@ const Header = ({ setType, setRatings }: HeaderProps) => {
                       display={"flex"}
                       alignItems={"center"}
                       justifyContent="space-around"
-                      onClick={() => setRatings(5)}
+                      onClick={() => setRatings("5")}
                     >
                       <Text
                         fontSize={{ base: "small", md: "large" }}
