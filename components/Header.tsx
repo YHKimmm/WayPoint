@@ -26,10 +26,12 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme();
 
 interface HeaderProps {
+  type: string;
   setType: (type: string) => void;
   setRatings: (ratings: string) => void;
 }
-const Header = ({ setType, setRatings }: HeaderProps) => {
+const Header = ({ type, setType, setRatings }: HeaderProps) => {
+  console.log("type", type);
   return (
     <header>
       <Flex>
@@ -156,7 +158,7 @@ const Header = ({ setType, setRatings }: HeaderProps) => {
                         fontWeight={500}
                         color={"orange.500"}
                       >
-                        5.0
+                        4.5
                       </Text>
 
                       <Rating size="small" value={5} readOnly />
@@ -174,73 +176,85 @@ const Header = ({ setType, setRatings }: HeaderProps) => {
             justifyContent={"center"}
             px={4}
             py={2}
-            bg={"white"}
+            bg={type === "restaurants" ? "orange.500" : "white"}
             rounded={"full"}
             ml={2}
             shadow="lg"
             cursor={"pointer"}
-            _hover={{ bg: "gray.100" }}
+            _hover={{ bg: type === "restaurants" ? "orange.600" : "gray.100" }}
             transition={"ease-in-out"}
             transitionDuration={"0.3s"}
             onClick={() => setType("restaurants")}
           >
-            <BiRestaurant fontSize={"25"} style={{ color: "orange" }} />
+            <BiRestaurant
+              fontSize={"25"}
+              style={{ color: type === "restaurants" ? "white" : "orange" }}
+            />
             <Text
               fontSize={{ base: "small", md: "large" }}
               fontWeight={"semibold"}
               mx={2}
+              color={type === "restaurants" ? "white" : "black"}
             >
               Restaurants
             </Text>
           </Flex>
 
-          {/* hotels */}
+          {/* hotels
           <Flex
             alignItems={"center"}
             justifyContent={"center"}
             px={4}
             py={2}
-            bg={"white"}
+            bg={type === "hotels" ? "orange.500" : "white"}
             rounded={"full"}
             ml={2}
             shadow="lg"
             cursor={"pointer"}
-            _hover={{ bg: "gray.100" }}
+            _hover={{ bg: type === "hotels" ? "orange.600" : "gray.100" }}
             transition={"ease-in-out"}
             transitionDuration={"0.3s"}
             onClick={() => setType("hotels")}
           >
-            <BiHotel fontSize={"25"} style={{ color: "orange" }} />
+            <BiHotel
+              fontSize={"25"}
+              style={{ color: type === "hotels" ? "white" : "orange" }}
+            />
             <Text
               fontSize={{ base: "small", md: "large" }}
               fontWeight={"semibold"}
               mx={2}
+              color={type === "hotels" ? "white" : "black"}
             >
               Hotels
             </Text>
-          </Flex>
+          </Flex> */}
 
-          {/* Attractions */}
+          {/* attractions */}
           <Flex
             alignItems={"center"}
             justifyContent={"center"}
             px={4}
             py={2}
-            bg={"white"}
+            bg={type === "attractions" ? "orange.500" : "white"}
             rounded={"full"}
             ml={2}
             shadow="lg"
             cursor={"pointer"}
-            _hover={{ bg: "gray.100" }}
+            _hover={{ bg: type === "attractions" ? "orange.600" : "gray.100" }}
             transition={"ease-in-out"}
             transitionDuration={"0.3s"}
             onClick={() => setType("attractions")}
           >
-            <BiMapAlt fontSize={"25"} style={{ color: "orange" }} />
+            <BiMapAlt
+              fontSize={"25"}
+              style={{ color: type === "attractions" ? "white" : "orange" }}
+            />
             <Text
               fontSize={{ base: "small", md: "large" }}
               fontWeight={"semibold"}
               mx={2}
+              color={type === "attractions" ? "white" : "black"}
             >
               Attractions
             </Text>

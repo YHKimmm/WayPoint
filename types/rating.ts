@@ -1,3 +1,5 @@
 export type Rating = {
-  rating?: string;
+  rating: string;
+  latitude?: number;
+  longitude?: number;
 };

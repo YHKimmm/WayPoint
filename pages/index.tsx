@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { Coordinates, Bounds } from "@/types/store";
 import { getPlacesData } from "./api";
 import { Rating } from "@/types/rating";
+import { Marker } from "@react-google-maps/api";
 
 export default function Home() {
   const [places, setPlaces] = useState<Rating[]>([]);
@@ -32,13 +33,11 @@ export default function Home() {
   console.log("coordinates", coordinates);
 
   useEffect(() => {
-    const filteredPlaces = places.filter(
-      (place) => place.rating !== undefined && place.rating > ratings
-    );
+    const filteredPlaces = places.filter((place) => place.rating >= ratings);
     setFilteredPlaces(filteredPlaces);
     console.log("filteredPlaces", filteredPlaces);
     console.log("ratings", ratings);
-  }, [ratings]);
+  }, [places, ratings, type]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -57,14 +56,18 @@ export default function Home() {
       height={"100vh"}
       position={"relative"}
     >
-      <Header setType={setType} setRatings={setRatings} />
+      <Header type={type} setType={setType} setRatings={setRatings} />
 
-      <List places={places} isLoading={isLoading} />
+      <List
+        places={filteredPlaces.length ? filteredPlaces : places}
+        isLoading={isLoading}
+      />
 
       <Map
         coordinates={coordinates}
         setCoordinates={setCoordinates}
         setBounds={setBounds}
+        places={filteredPlaces.length ? filteredPlaces : places}
       />
     </Flex>
   );
