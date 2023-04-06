@@ -1,5 +1,7 @@
+/* eslint-disable @next/next/no-sync-scripts */
 import Head from "next/head";
 import Image from "next/image";
+import Script from "next/script";
 import Header from "@/components/Header";
 import List from "@/components/List";
 import Map from "@/components/Map";
@@ -9,7 +11,6 @@ import { useState, useEffect } from "react";
 import { Coordinates, Bounds } from "@/types/store";
 import { getPlacesData } from "./api";
 import { Rating } from "@/types/rating";
-import { Marker } from "@react-google-maps/api";
 
 export default function Home() {
   const [places, setPlaces] = useState<Rating[]>([]);
@@ -33,7 +34,9 @@ export default function Home() {
   console.log("coordinates", coordinates);
 
   useEffect(() => {
-    const filteredPlaces = places.filter((place) => place.rating >= ratings);
+    const filteredPlaces = places
+      ? places.filter((place) => place.rating >= ratings)
+      : [];
     setFilteredPlaces(filteredPlaces);
     console.log("filteredPlaces", filteredPlaces);
     console.log("ratings", ratings);
@@ -56,19 +59,37 @@ export default function Home() {
       height={"100vh"}
       position={"relative"}
     >
-      <Header type={type} setType={setType} setRatings={setRatings} />
+      <Head>
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+        />
+      </Head>
+      {/* <Script
+        strategy="lazyOnload"
+        src={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+      /> */}
+
+      <Header
+        type={type}
+        setType={setType}
+        setRatings={setRatings}
+        setCoordinates={setCoordinates}
+      />
 
       <List
         places={filteredPlaces.length ? filteredPlaces : places}
         isLoading={isLoading}
       />
-
       <Map
         coordinates={coordinates}
         setCoordinates={setCoordinates}
         setBounds={setBounds}
         places={filteredPlaces.length ? filteredPlaces : places}
       />
+
+      {/* <Script
+        src={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+      /> */}
     </Flex>
   );
 }

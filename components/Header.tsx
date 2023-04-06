@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Flex,
   Input,
@@ -22,6 +22,7 @@ import {
 } from "react-icons/bi";
 import { Rating, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
+import { Coordinates } from "@/types/store";
 
 const theme = createTheme();
 
@@ -29,30 +30,46 @@ interface HeaderProps {
   type: string;
   setType: (type: string) => void;
   setRatings: (ratings: string) => void;
+  setCoordinates: (cordinates: Coordinates) => void;
 }
-const Header = ({ type, setType, setRatings }: HeaderProps) => {
+const Header = ({ type, setType, setRatings, setCoordinates }: HeaderProps) => {
+  const [autocomplete, setAutocomplete] = useState<any>(null);
+
+  const onLoad = (autoC: any) => setAutocomplete(autoC);
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const lat = autocomplete.getPlace().geometry.location.lat();
+      const lng = autocomplete.getPlace().geometry.location.lng();
+      console.log(lat, lng);
+      setCoordinates({ lat, lng });
+    }
+  };
+
   console.log("type", type);
   return (
     <header>
       <Flex>
-        <InputGroup flex={1} shadow="lg">
-          <InputRightElement
-            pointerEvents={"none"}
-            // eslint-disable-next-line react/no-children-prop
-            children={<BiSearch color="gray" fontSize={20} />}
-          />
-          <Input
-            type={"text"}
-            placeholder="Search Google Map..."
-            variant={"filled"}
-            fontSize={{ base: "small", md: "medium" }}
-            bg={"white"}
-            color={"gray.700"}
-            _hover={{ bg: "whiteAlpha.800" }}
-            _focus={{ bg: "whiteAlpha.800" }}
-            _placeholder={{ color: "gray.700" }}
-          />
-        </InputGroup>
+        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+          <InputGroup flex={1} shadow="lg">
+            <InputRightElement pointerEvents={"none"}>
+              <span>
+                <BiSearch color="gray" fontSize={20} />
+              </span>
+            </InputRightElement>
+            <Input
+              type={"text"}
+              placeholder="Search Google Map..."
+              variant={"filled"}
+              fontSize={{ base: "small", md: "medium" }}
+              bg={"white"}
+              color={"gray.700"}
+              _hover={{ bg: "whiteAlpha.800" }}
+              _focus={{ bg: "whiteAlpha.800" }}
+              _placeholder={{ color: "gray.700" }}
+            />
+          </InputGroup>
+        </Autocomplete>
         <Flex alignItems={"center"} justifyContent={"center"}>
           <Flex
             alignItems={"center"}
@@ -181,7 +198,9 @@ const Header = ({ type, setType, setRatings }: HeaderProps) => {
             ml={2}
             shadow="lg"
             cursor={"pointer"}
-            _hover={{ bg: type === "restaurants" ? "orange.600" : "gray.100" }}
+            _hover={{
+              bg: type === "restaurants" ? "orange.600" : "gray.100",
+            }}
             transition={"ease-in-out"}
             transitionDuration={"0.3s"}
             onClick={() => setType("restaurants")}
@@ -241,7 +260,9 @@ const Header = ({ type, setType, setRatings }: HeaderProps) => {
             ml={2}
             shadow="lg"
             cursor={"pointer"}
-            _hover={{ bg: type === "attractions" ? "orange.600" : "gray.100" }}
+            _hover={{
+              bg: type === "attractions" ? "orange.600" : "gray.100",
+            }}
             transition={"ease-in-out"}
             transitionDuration={"0.3s"}
             onClick={() => setType("attractions")}
