@@ -14,11 +14,11 @@ import {
 import { Autocomplete } from "@react-google-maps/api";
 import {
   BiChevronDown,
-  BiHotel,
   BiMapAlt,
   BiRestaurant,
   BiSearch,
   BiStar,
+  BiMapPin,
 } from "react-icons/bi";
 import { Rating, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
@@ -34,16 +34,28 @@ interface HeaderProps {
 }
 const Header = ({ type, setType, setRatings, setCoordinates }: HeaderProps) => {
   const [autocomplete, setAutocomplete] = useState<any>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
 
+  console.log("autocomplete", autocomplete);
   const onLoad = (autoC: any) => setAutocomplete(autoC);
 
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
-      const lat = autocomplete.getPlace().geometry.location.lat();
-      const lng = autocomplete.getPlace().geometry.location.lng();
+      const lat = autocomplete?.getPlace()?.geometry?.location?.lat();
+      const lng = autocomplete?.getPlace()?.geometry?.location?.lng();
       console.log(lat, lng);
       setCoordinates({ lat, lng });
     }
+  };
+
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      ({ coords: { latitude, longitude } }) => {
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+          setCoordinates({ lat: latitude, lng: longitude });
+        }
+      }
+    );
   };
 
   console.log("type", type);
@@ -219,36 +231,6 @@ const Header = ({ type, setType, setRatings, setCoordinates }: HeaderProps) => {
             </Text>
           </Flex>
 
-          {/* hotels
-          <Flex
-            alignItems={"center"}
-            justifyContent={"center"}
-            px={4}
-            py={2}
-            bg={type === "hotels" ? "orange.500" : "white"}
-            rounded={"full"}
-            ml={2}
-            shadow="lg"
-            cursor={"pointer"}
-            _hover={{ bg: type === "hotels" ? "orange.600" : "gray.100" }}
-            transition={"ease-in-out"}
-            transitionDuration={"0.3s"}
-            onClick={() => setType("hotels")}
-          >
-            <BiHotel
-              fontSize={"25"}
-              style={{ color: type === "hotels" ? "white" : "orange" }}
-            />
-            <Text
-              fontSize={{ base: "small", md: "large" }}
-              fontWeight={"semibold"}
-              mx={2}
-              color={type === "hotels" ? "white" : "black"}
-            >
-              Hotels
-            </Text>
-          </Flex> */}
-
           {/* attractions */}
           <Flex
             alignItems={"center"}
@@ -280,6 +262,33 @@ const Header = ({ type, setType, setRatings, setCoordinates }: HeaderProps) => {
               Attractions
             </Text>
           </Flex>
+        </Flex>
+
+        {/* My current location */}
+        <Flex
+          alignItems={"center"}
+          justifyContent={"center"}
+          px={4}
+          py={2}
+          bg={"white"}
+          rounded={"full"}
+          ml={2}
+          shadow="lg"
+          cursor={"pointer"}
+          _hover={{ bg: "gray.100" }}
+          transition={"ease-in-out"}
+          transitionDuration={"0.3s"}
+          onClick={getCurrentLocation}
+        >
+          <BiMapPin fontSize={"25"} />
+          <Text
+            fontSize={{ base: "small", md: "large" }}
+            fontWeight={"semibold"}
+            mx={2}
+            color={"black"}
+          >
+            My Location
+          </Text>
         </Flex>
       </Flex>
     </header>

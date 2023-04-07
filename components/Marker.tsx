@@ -3,21 +3,21 @@ import { Box } from "@chakra-ui/react";
 import React from "react";
 
 interface MarkerProps {
-  lat?: number;
-  lng?: number;
-  position?: string;
-  cursor?: string;
+  lat: number;
+  lng: number;
+  cursor: string;
+  onClick: () => void;
 }
 
-const Marker = ({ lat, lng, position, cursor }: MarkerProps) => {
+const Marker = ({ lat, lng, cursor, onClick }: MarkerProps) => {
   return (
     <Box
-      data-lat={lat}
-      data-lng={lng}
-      data-position={position}
+      data-lat={lat.toString()}
+      data-lng={lng.toString()}
       data-cursor={cursor}
+      onClick={() => onClick()}
     >
-      <IoLocation color={"red"} size={30} />
+      <IoLocation style={{ color: "#EF4444" }} size={30} />
     </Box>
   );
 };

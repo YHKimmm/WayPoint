@@ -1,16 +1,21 @@
 import { Coordinates, Bounds } from "@/types/store";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import GoogleMapReact from "google-map-react";
-import { Rating } from "@/types/rating";
-import { Box, Image, Text } from "@chakra-ui/react";
+import { Ratings } from "@/types/rating";
+import { Rating, ThemeProvider } from "@mui/material";
+import { Box, Image, Text, Flex } from "@chakra-ui/react";
 import { BiX } from "react-icons/bi";
 import Marker from "./Marker";
+import { createTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
+
+const theme = createTheme();
 
 interface MapProps {
   coordinates: Coordinates;
   setCoordinates: (coordinates: Coordinates) => void;
   setBounds: (bounds: Bounds) => void;
-  places: Rating[];
+  places: Ratings[];
 }
 
 export default function Map({
@@ -19,30 +24,33 @@ export default function Map({
   setBounds,
   places,
 }: MapProps) {
+  const isMobile = useMediaQuery("(max-width: 700px)");
+
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [cardData, setCardData] = useState({} as any);
-  const mapRef = useRef(null);
+  const [markerPosition, setMarkerPosition] = useState({ lat: 0, lng: 0 });
 
   const center = { lat: coordinates.lat, lng: coordinates.lng };
   console.log("places", places);
   console.log("cardData", cardData);
+  console.log("markerPosition", markerPosition);
 
   return (
     <GoogleMapReact
       bootstrapURLKeys={{
         key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+        libraries: ["places"],
+        id: "CUSTOM_SCRIPT_ID",
       }}
-      zoom={10}
       center={center}
-      options={{ disableDefaultUI: true, zoomControl: true }}
-      ref={mapRef}
+      zoom={15}
       onChange={(e) => {
         console.log("e", e);
         setCoordinates({ lat: e.center.lat, lng: e.center.lng });
         setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw });
       }}
       onChildClick={(child) => {
-        console.log({ child });
+        console.log("clicked marker index:", child);
         setCardData(places[child]);
         setIsCardOpen(true);
       }}
@@ -53,26 +61,41 @@ export default function Map({
             key={i}
             lat={Number(place.latitude) ? Number(place.latitude) : 0}
             lng={Number(place.longitude) ? Number(place.longitude) : 0}
-            position="relative"
             cursor="pointer"
+            onClick={() =>
+              setMarkerPosition({
+                lat: Number(place.latitude),
+                lng: Number(place.longitude),
+              })
+            }
           />
         ))}
 
       {isCardOpen && (
         <Box
-          width={"200px"}
-          height={"150px"}
-          bg={"whiteAlpha.900"}
+          width={isMobile ? "150px" : "250px"}
+          height={"fit-content"}
           position={"absolute"}
-          top={-12}
-          left={10}
+          top={-50}
+          left={isMobile ? "-20" : "20"}
           shadow={"lg"}
           rounded={"lg"}
+          padding={4}
+          bg={"whiteAlpha.900"}
+          cursor={"pointer"}
+          onClick={() => setIsCardOpen(false)}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
         >
           <Image
             alt="place image"
             objectFit={"cover"}
             width={"full"}
+            maxHeight={"170px"}
+            marginBottom={4}
             rounded="lg"
             src={
               cardData?.photo
@@ -82,20 +105,43 @@ export default function Map({
           />
           <Text
             textTransform={"capitalize"}
-            width={"40"}
-            fontSize={"lg"}
-            fontWeight={"500"}
-            isTruncated
+            color={"orange.800"}
+            fontSize={isMobile ? "sm" : "xl"}
+            fontWeight={"900"}
           >
             {cardData.name}
           </Text>
+          <Flex
+            alignItems={"center"}
+            width={"full"}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <ThemeProvider theme={theme}>
+              <Rating
+                size={isMobile ? "small" : "medium"}
+                value={Number(cardData.rating)}
+                readOnly
+              />
+              <Text
+                fontSize={isMobile ? "sm" : "md"}
+                fontWeight={"500"}
+                color={"gray.500"}
+              >
+                {cardData.num_reviews && `${cardData.num_reviews}`}
+              </Text>
+            </ThemeProvider>
+          </Flex>
           <Box
             cursor={"pointer"}
             position={"absolute"}
-            top={2}
-            right={2}
-            width={"30px"}
-            height={"30px"}
+            top={0}
+            right={0}
+            width={isMobile ? "15px" : "20px"}
+            height={isMobile ? "15px" : "20px"}
             bg={"red.300"}
             rounded={"full"}
             display={"flex"}
@@ -105,7 +151,7 @@ export default function Map({
               setIsCardOpen(false);
             }}
           >
-            <BiX fontSize={20} />
+            <BiX fontSize={30} color="white" />
           </Box>
         </Box>
       )}
