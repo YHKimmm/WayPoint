@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Flex,
   Input,
@@ -20,10 +21,10 @@ import {
   BiStar,
   BiMapPin,
 } from "react-icons/bi";
+import { MdCommute } from "react-icons/md";
 import { Rating, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { Coordinates } from "@/types/store";
-
 const theme = createTheme();
 
 interface HeaderProps {
@@ -289,6 +290,34 @@ const Header = ({ type, setType, setRatings, setCoordinates }: HeaderProps) => {
           >
             My Location
           </Text>
+        </Flex>
+
+        {/* Commute */}
+        <Flex
+          alignItems={"center"}
+          justifyContent={"center"}
+          px={4}
+          py={2}
+          bg={"white"}
+          rounded={"full"}
+          ml={2}
+          shadow="lg"
+          cursor={"pointer"}
+          _hover={{ bg: "gray.100" }}
+          transition={"ease-in-out"}
+          transitionDuration={"0.3s"}
+        >
+          <MdCommute fontSize={"25"} />
+          <Link href="commute">
+            <Text
+              fontSize={{ base: "small", md: "large" }}
+              fontWeight={"semibold"}
+              mx={2}
+              color={"black"}
+            >
+              Commute
+            </Text>
+          </Link>
         </Flex>
       </Flex>
     </header>
