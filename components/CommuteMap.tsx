@@ -17,6 +17,7 @@ export default function CommuteMap() {
   const mapRef = useRef<GoogleMap>();
   const [currentLocation, setCurrentLocation] = useState<LatLngLiteral>();
   const [office, setOffice] = useState<LatLngLiteral>();
+  console.log("office", office);
   // current location
   useEffect(() => {
     if (typeof window !== undefined) {
@@ -29,9 +30,7 @@ export default function CommuteMap() {
       );
     }
   }, []);
-  const onLoad = useCallback((map: any) => (mapRef.current = map), []);
 
-  console.log("currentLocation", currentLocation);
   const center = useMemo(() => currentLocation, [currentLocation]);
   const options = useMemo<MapOptions>(
     () => ({
@@ -39,6 +38,12 @@ export default function CommuteMap() {
     }),
     []
   );
+
+  const onLoad = useCallback((map: any) => (mapRef.current = map), []);
+  const houses = useMemo(() => {
+    return generateHouses(office!);
+  }, [office]);
+  console.log("houses", houses);
   return (
     <div className="container">
       <div className="controls">
@@ -57,7 +62,22 @@ export default function CommuteMap() {
           mapContainerClassName="map-container"
           options={options}
           onLoad={onLoad}
-        ></GoogleMap>
+        >
+          {office && (
+            <>
+              <Marker
+                position={office}
+                icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+              />
+              {houses.map((house) => (
+                <Marker key={house.lat} position={house} />
+              ))}
+              <Circle center={office} radius={10000} options={closeOptions} />
+              <Circle center={office} radius={25000} options={middleOptions} />
+              <Circle center={office} radius={35000} options={farOptions} />
+            </>
+          )}
+        </GoogleMap>
       </div>
     </div>
   );
@@ -98,8 +118,8 @@ const generateHouses = (position: LatLngLiteral) => {
   for (let i = 0; i < 100; i++) {
     const direction = Math.random() < 0.5 ? -2 : 2;
     _houses.push({
-      lat: position.lat + Math.random() / direction,
-      lng: position.lng + Math.random() / direction,
+      lat: position?.lat + Math.random() / direction,
+      lng: position?.lng + Math.random() / direction,
     });
   }
   return _houses;

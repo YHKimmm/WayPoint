@@ -25,9 +25,17 @@ export default function Place({ setOffice }: PlacesProps) {
     clearSuggestions,
   } = usePlacesAutocomplete();
 
-  console.log({ status, data });
+  const handleSelect = async (address: string) => {
+    setValue(address, false);
+    clearSuggestions();
+
+    const result = await getGeocode({ address });
+    const { lat, lng } = await getLatLng(result[0]);
+    setOffice({ lat, lng });
+  };
+
   return (
-    <Combobox onSelect={() => {}}>
+    <Combobox onSelect={handleSelect}>
       <ComboboxInput
         value={value}
         onChange={(e) => {
@@ -37,6 +45,14 @@ export default function Place({ setOffice }: PlacesProps) {
         placeholder="Search office address"
         className="combobox-input"
       />
+      <ComboboxPopover>
+        <ComboboxList>
+          {status === "OK" &&
+            data.map(({ place_id, description }) => (
+              <ComboboxOption key={place_id} value={description} />
+            ))}
+        </ComboboxList>
+      </ComboboxPopover>
     </Combobox>
   );
 }
