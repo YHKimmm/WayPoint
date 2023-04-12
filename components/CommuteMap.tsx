@@ -7,7 +7,7 @@ import {
   MarkerClusterer,
 } from "@react-google-maps/api";
 import Place from "./Place";
-// import Distance from "./distance";
+import Distance from "./Distance";
 
 type LatLngLiteral = google.maps.LatLngLiteral;
 type DirectionsResult = google.maps.DirectionsResult;
@@ -17,6 +17,7 @@ export default function CommuteMap() {
   const mapRef = useRef<GoogleMap>();
   const [currentLocation, setCurrentLocation] = useState<LatLngLiteral>();
   const [office, setOffice] = useState<LatLngLiteral>();
+  const [directions, setDirections] = useState<DirectionsResult>();
   console.log("office", office);
   // current location
   useEffect(() => {
@@ -43,7 +44,29 @@ export default function CommuteMap() {
   const houses = useMemo(() => {
     return generateHouses(office!);
   }, [office]);
-  console.log("houses", houses);
+
+  const fetchDirections = (house: LatLngLiteral) => {
+    if (!office) return;
+
+    const service = new google.maps.DirectionsService();
+    console.log("service", service);
+    service.route(
+      {
+        origin: house,
+        destination: office,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        console.log({ result, status });
+        if (status === "OK" && result) {
+          setDirections(result);
+        }
+      }
+    );
+  };
+
+  console.log("directions", directions);
+
   return (
     <div className="container">
       <div className="controls">
@@ -54,6 +77,12 @@ export default function CommuteMap() {
             mapRef.current?.panTo(position);
           }}
         />
+        {!office && (
+          <p style={{ color: "#fff" }}>
+            Enter an office address to get started
+          </p>
+        )}
+        {directions && <Distance leg={directions.routes[0].legs[0]} />}
       </div>
       <div className="map">
         <GoogleMap
@@ -63,15 +92,40 @@ export default function CommuteMap() {
           options={options}
           onLoad={onLoad}
         >
+          {directions && (
+            <DirectionsRenderer
+              directions={directions}
+              options={{
+                polylineOptions: {
+                  strokeColor: "#1976D2",
+                  zIndex: 50,
+                  strokeWeight: 5,
+                },
+              }}
+            />
+          )}
           {office && (
             <>
               <Marker
                 position={office}
                 icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
               />
-              {houses.map((house) => (
-                <Marker key={house.lat} position={house} />
-              ))}
+              <MarkerClusterer>
+                {(clusterer) => (
+                  <div>
+                    {houses.map((house, i) => (
+                      <Marker
+                        key={i}
+                        position={house}
+                        clusterer={clusterer}
+                        onClick={() => {
+                          fetchDirections(house);
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </MarkerClusterer>
               <Circle center={office} radius={10000} options={closeOptions} />
               <Circle center={office} radius={25000} options={middleOptions} />
               <Circle center={office} radius={35000} options={farOptions} />
