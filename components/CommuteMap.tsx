@@ -76,12 +76,12 @@ export default function CommuteMap() {
           <BsFillArrowLeftCircleFill fontSize={25} />
         </Link>
         <h1>Commute?</h1>
-        <Place
+        {/* <Place
           setOffice={(position) => {
             setOffice(position);
             mapRef.current?.panTo(position);
           }}
-        />
+        /> */}
         {!office && <p>Enter an office address to get started</p>}
         {directions && <Distance leg={directions.routes[0].legs[0]} />}
       </div>

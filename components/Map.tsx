@@ -34,9 +34,6 @@ export default function Map({
   const [markerPosition, setMarkerPosition] = useState({ lat: 0, lng: 0 });
 
   const center = { lat: coordinates?.lat, lng: coordinates?.lng };
-  // console.log("places", places);
-  // console.log("cardData", cardData);
-  // console.log("markerPosition", markerPosition);
 
   return (
     <GoogleMapReact
