@@ -6,7 +6,7 @@ import {
   Circle,
   MarkerClusterer,
 } from "@react-google-maps/api";
-import Place from "./Place";
+// import Place from "./Place";
 import Distance from "./Distance";
 import Link from "next/link";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
