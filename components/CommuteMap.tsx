@@ -8,6 +8,8 @@ import {
 } from "@react-google-maps/api";
 import Place from "./Place";
 import Distance from "./Distance";
+import Link from "next/link";
+import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 
 type LatLngLiteral = google.maps.LatLngLiteral;
 type DirectionsResult = google.maps.DirectionsResult;
@@ -21,7 +23,7 @@ export default function CommuteMap() {
   console.log("office", office);
   // current location
   useEffect(() => {
-    if (typeof window !== undefined) {
+    if (typeof window !== undefined && typeof google !== undefined) {
       navigator.geolocation.getCurrentPosition(
         ({ coords: { latitude, longitude } }) => {
           if (!isNaN(latitude) && !isNaN(longitude)) {
@@ -70,6 +72,9 @@ export default function CommuteMap() {
   return (
     <div className="container">
       <div className="controls">
+        <Link href="/">
+          <BsFillArrowLeftCircleFill fontSize={25} />
+        </Link>
         <h1>Commute?</h1>
         <Place
           setOffice={(position) => {
@@ -77,11 +82,7 @@ export default function CommuteMap() {
             mapRef.current?.panTo(position);
           }}
         />
-        {!office && (
-          <p style={{ color: "#fff" }}>
-            Enter an office address to get started
-          </p>
-        )}
+        {!office && <p>Enter an office address to get started</p>}
         {directions && <Distance leg={directions.routes[0].legs[0]} />}
       </div>
       <div className="map">

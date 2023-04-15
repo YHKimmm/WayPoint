@@ -12,8 +12,8 @@ interface MarkerProps {
 const Marker = ({ lat, lng, cursor, onClick }: MarkerProps) => {
   return (
     <Box
-      data-lat={lat.toString()}
-      data-lng={lng.toString()}
+      data-lat={lat}
+      data-lng={lng}
       data-cursor={cursor}
       onClick={() => onClick()}
     >

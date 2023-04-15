@@ -11,6 +11,9 @@ import { useMediaQuery } from "@mui/material";
 
 const theme = createTheme();
 
+type googleMapsApiKey = string;
+type LatLngLiteral = google.maps.LatLngLiteral;
+
 interface MapProps {
   coordinates: Coordinates;
   setCoordinates: (coordinates: Coordinates) => void;
@@ -30,24 +33,21 @@ export default function Map({
   const [cardData, setCardData] = useState({} as any);
   const [markerPosition, setMarkerPosition] = useState({ lat: 0, lng: 0 });
 
-  const center = { lat: coordinates.lat, lng: coordinates.lng };
-  console.log("places", places);
-  console.log("cardData", cardData);
-  console.log("markerPosition", markerPosition);
+  const center = { lat: coordinates?.lat, lng: coordinates?.lng };
+  // console.log("places", places);
+  // console.log("cardData", cardData);
+  // console.log("markerPosition", markerPosition);
 
   return (
     <GoogleMapReact
       bootstrapURLKeys={{
-        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-        libraries: ["places"],
-        id: "CUSTOM_SCRIPT_ID",
+        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as googleMapsApiKey,
       }}
       center={center}
       zoom={15}
       onChange={(e) => {
-        console.log("e", e);
-        setCoordinates({ lat: e.center.lat, lng: e.center.lng });
-        setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw });
+        setCoordinates({ lat: e?.center?.lat, lng: e?.center?.lng });
+        setBounds({ ne: e?.marginBounds?.ne, sw: e?.marginBounds?.sw });
       }}
       onChildClick={(child) => {
         console.log("clicked marker index:", child);
@@ -59,8 +59,8 @@ export default function Map({
         places.map((place, i) => (
           <Marker
             key={i}
-            lat={Number(place.latitude) ? Number(place.latitude) : 0}
-            lng={Number(place.longitude) ? Number(place.longitude) : 0}
+            lat={Number(place?.latitude) ? Number(place?.latitude) : 0}
+            lng={Number(place?.longitude) ? Number(place?.longitude) : 0}
             cursor="pointer"
             onClick={() =>
               setMarkerPosition({

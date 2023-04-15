@@ -10,7 +10,6 @@ import {
   ComboboxOption,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
-import useAutocomplete from "@mui/material/useAutocomplete";
 
 interface PlacesProps {
   setOffice: (position: google.maps.LatLngLiteral) => void;

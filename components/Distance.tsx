@@ -22,7 +22,7 @@ const Distance = ({ leg }: DistanceProps) => {
   );
 
   return (
-    <div style={{ color: "#fff" }}>
+    <div className="distance-container">
       <p>
         This home is <span className="highlight">{leg.distance.text} </span>
         from your office. That would take{" "}
